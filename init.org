@@ -1,0 +1,737 @@
+* Init
+:PROPERTIES:
+:tangle: ~/.emacs.d/init.el
+:END:
+#+BEGIN_SRC elisp :tangle "~/.emacs.d/init.el"
+(add-to-list 'load-path "~/.emacs.d/settings/")
+(add-to-list 'load-path "~/.emacs.d/plugins/")
+
+(require 'package-management-settings)
+
+(require 'interface-settings)
+
+(require 'editing-settings)
+
+(require 'programming-settings)
+
+(require 'programming-language-settings)
+
+(require 'reveal-settings)
+
+(require 'magit-settings)
+
+(require 'clean-buffers)
+#+END_SRC
+
+* Package Management
+:PROPERTIES:
+:tangle: ~/.emacs.d/settings/package-management-settings.el
+:END:
+** Melpa, marmalade
+
+Milkypostman’s Emacs Lisp Package Archive - https://melpa.org/#/
+
+Adding ~melpa stable~ to avoid conflicts.
+
+#+BEGIN_SRC elisp :tangle ./settings/package-management-settings.el :mkdirp yes
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa" . "http://melpa.org/packages/") t)
+  (add-to-list
+   'package-archives
+   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+  (package-initialize))
+
+#+END_SRC
+
+** Use-package
+
+~Use-package~ is a magic package that allow us to configure packages
+and ensure to download them before configuring. JUST INSTALL IT DUDE!
+
+https://github.com/jwiegley/use-package
+
+#+BEGIN_SRC elisp :tangle ./settings/package-management-settings.el :mkdirp yes
+
+(unless (featurep 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package)
+  )
+
+#+END_SRC
+
+** Backup files
+
+Backup `~` ended files in ~.emacs.d/backup/~.
+
+#+BEGIN_SRC elisp :tangle ./settings/package-management-settings.el :mkdirp yes
+
+(setq make-backup-files nil) ;; Hello GIT
+
+(setq backup-directory-alist '(("" . "~/.emacs.d/backup")))
+
+#+END_SRC
+
+** Provide
+Provide *package-management-settings.el*
+
+#+BEGIN_SRC elisp :tangle ./settings/package-management-settings.el :mkdirp yes
+(provide 'package-management-settings)
+#+END_SRC
+
+* Interface
+:PROPERTIES:
+:tangle:   ~/.emacs.d/settings/interface-settings.el
+:END:
+** Session
+
+This let us save buffers from one session to another, but I personally
+don't use it so we're gonna comment this by now.
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+;; (desktop-save-mode 1)
+#+END_SRC
+
+** Emacs bars
+
+Cleaner interface, cleaner life.
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+
+(tooltip-mode -1)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+
+#+END_SRC
+
+** Theme
+
+/Moe/ rules
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+
+(use-package moe-theme
+  :ensure t
+  :config (load-theme 'moe-dark t))
+
+#+END_SRC
+
+** Window movement
+
+I wanted a symbol in the left hand so I con move with *<symbol> +
+<arrow>*, I use Dvorak as a keyboard distribution so...
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+
+(use-package windmove
+  :bind (("C-. <up>" . windmove-up)
+         ("C-. <left>" . windmove-left)
+         ("C-. <right>" . windmove-right)
+         ("C-. <down>" . windmove-down))
+  )
+#+END_SRC
+
+** Helm rules!
+
+I personally LOOOVE helm
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+;; By @rockneurotiko
+(use-package helm
+  :ensure t
+  :diminish helm-mode
+  :init
+  (progn
+    (require 'helm-config)
+    (setq helm-candidate-number-limit 100)
+    ;; From https://gist.github.com/antifuchs/9238468
+    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+          helm-input-idle-delay 0.01  ; this actually updates things
+                                        ; reeeelatively quickly.
+          helm-yas-display-key-on-candidate t
+          helm-quick-update t
+          helm-M-x-requires-pattern nil
+          helm-ff-skip-boring-files t)
+    (setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+          helm-buffers-fuzzy-matching           t ; fuzzy matching buffer names when non--nil
+          helm-recentf-fuzzy-match              t
+          helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+          helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+          helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+          helm-ff-file-name-history-use-recentf t
+          helm-M-x-fuzzy-match t)  ;; optional fuzzy matching for helm-M-x
+    (helm-mode))
+  :config
+  (progn
+    ;; rebind tab to run persistent action
+    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+    ;; make TAB works in terminal
+    (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+    ;; list actions using C-z
+    (define-key helm-map (kbd "C-z")  'helm-select-action))
+  :bind (("C-x C-f" . helm-find-files)
+         ("C-x C-b" . helm-buffers-list)
+         ("C-x b" . helm-mini)
+         ("M-y" . helm-show-kill-ring)
+         ("M-x" . helm-M-x)
+         ("C-h a" . helm-apropos)
+         ("C-x c o" . helm-occur)
+         ("C-x c y" . helm-yas-complete)
+         ("C-x c Y" . helm-yas-create-snippet-on-region)
+         ("C-x c SPC" . helm-all-mark-rings)
+         ("C-c h g" . helm-google-suggest)))
+
+(ido-mode -1)
+
+(use-package helm-descbinds
+  :ensure t
+  :bind (("C-h b" . helm-descbinds)
+         ("C-h w" . helm-descbinds)))
+
+(use-package helm-swoop
+  ;; :disabled t
+  :ensure t
+  :bind (("M-i" . helm-swoop)
+         ("M-I" . helm-swoop-back-to-last-point)
+         ("C-c M-i" . helm-multi-swoop)
+         ("C-x M-i" . helm-multi-swoop-all)))
+
+(use-package ace-jump-helm-line
+  ;; :disabled t
+  :ensure t
+  :commands helm-mode
+  :init (define-key helm-map (kbd "C-'") 'ace-jump-helm-line))
+
+
+(defun set-helm-swoop ()
+  ;; Change the keybinds to whatever you like :)
+  )
+
+
+(defun set-helm-ace-jump ()
+  )
+#+END_SRC
+
+** Rainbow
+Rainbow delimeters lets you see where starts and ends each pair of
+parentheses painting them with different collors by pairs.
+
+Rainbow mode lets you see hex colors in /.css/ files.
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+;; Rainbow delimeters
+(use-package rainbow-delimiters
+  :ensure t
+  :init
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+  )
+
+;; Rainbow mode
+(use-package rainbow-mode
+  :ensure t
+  :mode "\\.css\\'"
+  )
+#+END_SRC
+
+** Maximized
+
+Start Emacs maximized
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+END_SRC
+
+** Inhib startup buffer
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+;; Remove initial buffer
+(setq inhibit-startup-screen t)
+#+END_SRC
+
+** Provide
+Provide *interface-settings.el*
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+(provide 'interface-settings)
+#+END_SRC
+
+* Editing
+:PROPERTIES:
+:tangle:   ~/.emacs.d/settings/editing-settings.el
+:END:
+
+** Mutiple cursors 
+
+Just a lot of cursors at the same time.
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+;; Multiple cursors
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/add-cursor-on-click))
+  )
+#+END_SRC
+
+** Undo
+
+Glorious undo with `C-z` and redoo with `C-S-z`.
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el
+;; Undo
+(use-package undo-tree
+  :ensure t
+  :init
+  (defalias 'redo 'undo-tree-redo)
+  :config
+  (global-undo-tree-mode 1)
+  (global-set-key (kbd "C-z") 'undo)
+  (global-set-key (kbd "C-S-z") 'redo)
+  )
+#+END_SRC
+
+** Indent buffer
+
+Function made by @skgsergio that indents the whole buffer.
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+;; Indent Fucking Whole Buffer (by github.com/skgsergio)
+(defun iwb ()
+  "Indent whole buffer"
+  (interactive)
+  (delete-trailing-whitespace)
+  (indent-region (point-min) (point-max) nil)
+  (untabify (point-min) (point-max))
+  (message "Indent buffer: Done.")
+  )
+
+(global-set-key "\M-i" 'iwb)
+#+END_SRC
+
+** Key bind fill paragraph
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+(global-set-key "\M-q" 'fill-paragraph)
+#+END_SRC
+
+** Move text
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+;; Move text
+(use-package move-text
+  :ensure t
+  :config
+  (global-set-key [(control shift up)]  'move-text-up)
+  (global-set-key [(control shift down)]  'move-text-line-down)
+  )
+#+END_SRC
+
+** Indent with spaces
+
+INDENT WITH SPACES!!
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+;; Don't indent with tabs ffs!
+(setq-default indent-tabs-mode nil)
+#+END_SRC
+
+** Provide
+Provide *editing-settings.el*
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+(provide 'editing-settings)
+#+END_SRC
+
+* Programming
+:PROPERTIES:
+:tangle:   ~/.emacs.d/settings/programming-settings.el
+:END:
+
+** Yasnippets
+
+Completion for all languages
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+;; Yasnippets
+(use-package yasnippet
+  :ensure t
+  :init (yas-global-mode 1)
+  :config
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "<C-tab>") 'yas-expand)
+  )
+#+END_SRC
+
+** Smart Parents
+
+Good stuff with parents (https://github.com/Fuco1/smartparens)
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+;; SmartParents
+(use-package smartparens
+  :ensure t
+  :init (smartparens-global-mode 0))
+#+END_SRC
+
+** Aggressive Indent
+
+Indent everything
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+;; Aggressive indent
+(use-package aggressive-indent
+  :ensure t
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+  (add-hook 'css-mode-hook #'aggressive-indent-mode)
+  )
+#+END_SRC
+
+** Auto Complete
+
+Well...
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+;; Auto complete
+(use-package auto-complete
+  :ensure t
+  :config (ac-config-default))
+#+END_SRC
+
+** Flycheck
+
+A lot of well...
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+;; Flycheck
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+#+END_SRC
+
+** Provide
+
+Providing *programming-settings.el*
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+(provide 'programming-settings)
+#+END_SRC
+
+* Languages
+:PROPERTIES:
+:tangle:   ~/.emacs.d/settings/programming-language-settings.el
+:END:
+
+Concrete language settings
+
+** Web
+
+JavaScript, CSS, HTML ...
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+;; php mode
+(use-package php-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.php[345]?\\'\\|\\.inc\\'" . php-mode)))
+
+;; json mode
+(use-package json-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.json\\'\\|\\.jshintrc\\'" . json-mode)))
+
+;; Web mode
+(use-package web-mode
+  :ensure t
+
+  :init
+  (defun my-web-mode-hook ()
+    "Hooks for Web mode."
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 4)
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-css-colorization t)
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-enable-current-column-highlight t)
+    (setq web-mode-enable-auto-expanding t))
+  
+  :config
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+  (add-hook 'web-mode-hook 'my-web-mode-hook)
+  )
+
+;; Emmet mode
+(use-package emmet-mode
+  :ensure t
+  :config
+  (add-hook 'web-mode-hook 'emmet-mode))
+
+;; Node repl
+(use-package nodejs-repl
+  :ensure t
+  :config
+  (defun my-jscallback ()
+    (local-set-key (kbd "C-c C-e") 'nodejs-repl-send-buffer))
+
+  (add-hook 'js-mode-hook 'my-jscallback))
+#+END_SRC
+
+** JavaScript
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+;;----------------------;
+;;; Javascript & Web ;;;
+;;----------------------;
+
+(defun load-tern ()
+  (use-package tern
+    :ensure t
+    :diminish tern-mode
+    :config
+    (defun ternhook ()
+      (tern-mode t)
+      (auto-complete-mode))
+    (add-hook 'js2-mode-hook 'ternhook)
+    (add-hook 'web-mode-hook 'ternhook)
+    (require 'tern-auto-complete)
+    (tern-ac-setup))
+
+  (defun delete-tern-process ()
+    (interactive)
+    (delete-process "Tern")))
+
+(defun js-flycheck ()
+  (use-package flycheck
+    :ensure t
+    :diminish flycheck-mode
+    :config
+    (add-hook 'js-mode-hook 'flycheck-mode)
+    (add-hook 'web-mode-hook 'flycheck-mode)
+    (flycheck-add-mode 'javascript-jshint 'web-mode)
+    (flycheck-add-mode 'html-tidy 'web-mode)))
+
+(defun use-js2 ()
+  (use-package js2-mode
+    :ensure t
+    :init
+    (setq js-indent-level 4)
+    (setq js2-indent-level 4)
+    (setq-default js2-basic-offset 4)
+    (setq ac-js2-evaluate-calls t)
+    (setq js2-highlight-level 3)
+    :config
+    (add-hook 'js2-mode-hook 'ac-js2-mode)
+    (add-hook 'js2-mode-hook 'jasminejs-mode)
+    (use-package js2-refactor
+      :ensure t
+      :config
+      (add-hook 'js2-mode-hook #'js2-refactor-mode)
+      (js2r-add-keybindings-with-prefix "C-c C-m"))
+
+    (js2-imenu-extras-mode)
+    (apply #'derived-mode-p '(org-mode web-mode))
+
+    (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js2-jsx-mode))
+
+    (add-hook 'js2-post-parse-callbacks
+              (lambda ()
+                (when (> (buffer-size) 0)
+                  (let ((btext (replace-regexp-in-string
+                                ": *true" " "
+                                (replace-regexp-in-string "[\n\t ]+" " " (buffer-substring-no-properties 1 (buffer-size)) t t))))
+                    (mapc (apply-partially 'add-to-list 'js2-additional-externs)
+                          (split-string
+                           (if (string-match "/\\* *global *\\(.*?\\) *\\*/" btext) (match-string-no-properties 1 btext) "")
+                           " *, *" t))
+                    )))))
+
+  (use-package php-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.php[345]?\\'\\|\\.inc\\'" . php-mode)))
+
+  (use-package json-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.json\\'\\|\\.jshintrc\\'" . json-mode)))
+
+  (use-package jasminejs-mode
+    :ensure t
+    :diminish jasminejs-mode
+    :config
+    (add-hook 'jasminejs-mode-hook (lambda () (jasminejs-add-snippets-to-yas-snippet-dirs))))
+
+  (use-package js2-refactor
+    :ensure t
+    :diminish js2-refactor-mode)
+
+  (add-to-list 'auto-mode-alist
+               '("\\.p?html\\(\\.[a-z]\\{2\\}\\)?\\'" . html-mode)))
+
+(defun load-web-mode ()
+  (defun my-web-mode-hook ()
+    "Hooks for Web mode."
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 4)
+    (set-face-attribute 'web-mode-css-at-rule-face nil :foreground "Pink3")
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-css-colorization t)
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-enable-current-column-highlight t)
+    (setq web-mode-enable-auto-expanding t))
+
+  (use-package web-mode
+    :ensure t
+    :init
+    (setq web-mode-content-types-alist
+          '(("jsx" . "\\.js[x]?\\'")))
+    :config
+    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+    (add-hook 'web-mode-hook  'my-web-mode-hook))
+  )
+
+(use-package emmet-mode
+  :ensure t
+  :config
+  (defun emmet-hook()
+    (emmet-mode)
+    (local-set-key (kbd "M-TAB") 'emmet-expand-line))
+  ;; Auto-start on any markup modes
+  (add-hook 'sgml-mode-hook 'emmet-hook)
+  ;; enable Emmet's css abbreviation.
+  (add-hook 'css-mode-hook  'emmet-hook))
+
+(use-package nodejs-repl
+  :ensure t
+  :config
+  (defun my-jscallback ()
+    (local-set-key (kbd "C-c C-e") 'nodejs-repl-send-buffer))
+
+  (add-hook 'js-mode-hook 'my-jscallback))
+#+END_SRC
+
+** Python
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+(package-initialize)
+(use-package elpy
+  :ensure t
+  :config (elpy-enable)
+)
+#+END_SRC
+
+** Scala
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+(use-package scala-mode
+  :ensure t)
+#+END_SRC
+
+** Provide
+
+Providing *programming-language-settings.el*
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+(provide 'programming-language-settings)
+#+END_SRC
+
+* Reveal
+:PROPERTIES:
+:tangle:   ~/.emacs.d/settings/reveal-settings.el
+:END:
+
+Make beautiful slides with ox-reveal
+
+** Settings
+#+BEGIN_SRC elisp :tangle ./settings/reveal-settings.el :mkdirp yes
+  (use-package org
+    :ensure t)
+  (use-package ox-reveal
+    :ensure t
+    :config
+    (setq org-reveal-root "file:///home/ironjanowar/reveal.js"))
+#+END_SRC
+
+** Provide
+
+Providing *reveal-settings.el*
+#+BEGIN_SRC elisp :tangle ./settings/reveal-settings.el :mkdirp yes
+(provide 'reveal-settings)
+#+END_SRC
+
+* Magit
+:PROPERTIES:
+:tangle:   ~/.emacs.d/settings/magit-settings.el
+:END:
+
+Magit is a lovely mode for git.
+
+** Settings
+
+#+BEGIN_SRC elisp :tangle ./settings/magit-settings.el :mkdirp yes
+;; Magit
+(use-package magit
+  :ensure t
+  :bind (("C-c g" . magit-status)
+         ("C-x M-g" . magit-dispatch-popup))
+  )
+#+END_SRC
+
+** Provide
+
+Providing *magit-settings.el*
+
+#+BEGIN_SRC elisp :tangle ./settings/magit-settings.el :mkdirp yes
+(provide 'magit-settings)
+#+END_SRC
+
+* Clean Buffers
+
+Kill all buffers
+
+#+BEGIN_SRC elisp :tangle ./plugins/clean-buffers.el :mkdirp yes
+(defun kill-buffers()
+  (let (buffer buffers)
+    (setq buffers (buffer-list))
+    (dotimes (i (length buffers))
+      (setq buffer (pop buffers))
+      (if (not (string-equal (buffer-name buffer) "*scratch*")) (kill-buffer buffer) nil))))
+
+(defun clean-buffers()
+       (interactive)
+       (if (yes-or-no-p "Do you really want to clean all buffers? ")
+           (kill-buffers) nil))
+
+(global-set-key (kbd "C-x C-k") 'clean-buffers)
+
+(provide 'clean-buffers)
+#+END_SRC
