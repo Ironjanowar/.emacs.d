@@ -5,6 +5,6 @@
   (in case you have it) and clone this repository.
 - Open Emacs.
 - Open *~/.emacs.d/init.org*
-- Use the command: `C-c C-v t` (or `M-x org-babel-tangle RET`)
+- Use the command: ~C-c C-v t~ (or ~M-x org-babel-tangle RET~)
 - Restart Emacs and wait until it installs everything
 - DONE!
