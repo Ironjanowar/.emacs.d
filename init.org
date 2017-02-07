@@ -369,15 +369,15 @@ Completion for all languages
   )
 #+END_SRC
 
-** Smart Parents
+** Smart Parens
 
-Good stuff with parents (https://github.com/Fuco1/smartparens)
+Good stuff with parens (https://github.com/Fuco1/smartparens)
 
 #+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
 ;; SmartParents
 (use-package smartparens
   :ensure t
-  :init (smartparens-global-mode 0))
+  :init (smartparens-global-mode t))
 #+END_SRC
 
 ** Aggressive Indent
