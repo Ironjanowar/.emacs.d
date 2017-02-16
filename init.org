@@ -658,6 +658,12 @@ JavaScript, CSS, HTML ...
   (use-package sbt-mode
     :ensure t)
 #+END_SRC
+** Elixir
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+  (use-package alchemist
+    :ensure t)
+#+END_SRC
 
 ** Provide
 
