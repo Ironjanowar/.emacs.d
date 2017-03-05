@@ -341,6 +341,14 @@ INDENT WITH SPACES!!
 (setq-default indent-tabs-mode nil)
 #+END_SRC
 
+** White space clean up
+Just before saving, erase the whitespaces left at the end of lines.
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+;; Clean my file pl0x!
+(add-hook 'before-save-hook 'whitespace-cleanup)
+#+END_SRC
+
 ** Provide
 Provide *editing-settings.el*
 
