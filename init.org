@@ -702,6 +702,12 @@ JavaScript, CSS, HTML ...
     :ensure t)
 #+END_SRC
 
+** Lua
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+  (use-package lua-mode
+    :ensure t)
+#+END_SRC
+
 ** TypeScript
 #+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
   (use-package tide
