@@ -110,13 +110,17 @@ Cleaner interface, cleaner life.
 
 ** Theme
 
-/Moe/ rules
+/Moe/ does not rule anymore :/
 
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
 
-(use-package moe-theme
-  :ensure t
-  :config (load-theme 'moe-dark t))
+  ;; (use-package moe-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'moe-dark t))
+
+  (use-package gruvbox-theme
+    :ensure t
+    :config (load-theme 'gruvbox-dark-hard t))
 
 #+END_SRC
 
