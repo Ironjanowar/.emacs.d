@@ -525,146 +525,154 @@ JavaScript, CSS, HTML ...
 ** JavaScript
 
 #+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
-;;----------------------;
-;;; Javascript & Web ;;;
-;;----------------------;
+  ;;----------------------;
+  ;;; Javascript & Web ;;;
+  ;;----------------------;
 
-(defun load-tern ()
-  (use-package tern
-    :ensure t
-    :diminish tern-mode
-    :config
-    (defun ternhook ()
-      (tern-mode t)
-      (auto-complete-mode))
-    (add-hook 'js2-mode-hook 'ternhook)
-    (add-hook 'web-mode-hook 'ternhook)
-    (require 'tern-auto-complete)
-    (tern-ac-setup))
+  (defun load-tern ()
+    (use-package tern
+      :ensure t
+      :diminish tern-mode
+      :config
+      (defun ternhook ()
+        (tern-mode t)
+        (auto-complete-mode))
+      (add-hook 'js2-mode-hook 'ternhook)
+      (add-hook 'web-mode-hook 'ternhook)
+      (require 'tern-auto-complete)
+      (tern-ac-setup))
 
-  (defun delete-tern-process ()
-    (interactive)
-    (delete-process "Tern")))
+    (defun delete-tern-process ()
+      (interactive)
+      (delete-process "Tern")))
 
-(defun js-flycheck ()
-  (use-package flycheck
-    :ensure t
-    :diminish flycheck-mode
-    :config
-    (add-hook 'js-mode-hook 'flycheck-mode)
-    (add-hook 'web-mode-hook 'flycheck-mode)
-    (flycheck-add-mode 'javascript-jshint 'web-mode)
-    (flycheck-add-mode 'html-tidy 'web-mode)))
+  (defun js-flycheck ()
+    (use-package flycheck
+      :ensure t
+      :diminish flycheck-mode
+      :config
+      (add-hook 'js-mode-hook 'flycheck-mode)
+      (add-hook 'web-mode-hook 'flycheck-mode)
+      (flycheck-add-mode 'javascript-jshint 'web-mode)
+      (flycheck-add-mode 'html-tidy 'web-mode)))
 
-(defun use-js2 ()
-  (use-package js2-mode
-    :ensure t
-    :init
-    (setq js-indent-level 4)
-    (setq js2-indent-level 4)
-    (setq-default js2-basic-offset 4)
-    (setq ac-js2-evaluate-calls t)
-    (setq js2-highlight-level 3)
-    :config
-    (add-hook 'js2-mode-hook 'ac-js2-mode)
-    (add-hook 'js2-mode-hook 'jasminejs-mode)
-    (use-package js2-refactor
+  (defun use-js2 ()
+    (use-package js2-mode
+      :ensure t
+      :init
+      (setq js-indent-level 4)
+      (setq js2-indent-level 4)
+      (setq-default js2-basic-offset 4)
+      (setq ac-js2-evaluate-calls t)
+      (setq js2-highlight-level 3)
+      :config
+      (add-hook 'js2-mode-hook 'ac-js2-mode)
+      (add-hook 'js2-mode-hook 'jasminejs-mode)
+      (use-package js2-refactor
+        :ensure t
+        :config
+        (add-hook 'js2-mode-hook #'js2-refactor-mode)
+        (js2r-add-keybindings-with-prefix "C-c C-m"))
+
+      (js2-imenu-extras-mode)
+      (apply #'derived-mode-p '(org-mode web-mode))
+
+      (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js2-jsx-mode))
+
+      (add-hook 'js2-post-parse-callbacks
+                (lambda ()
+                  (when (> (buffer-size) 0)
+                    (let ((btext (replace-regexp-in-string
+                                  ": *true" " "
+                                  (replace-regexp-in-string "[\n\t ]+" " " (buffer-substring-no-properties 1 (buffer-size)) t t))))
+                      (mapc (apply-partially 'add-to-list 'js2-additional-externs)
+                            (split-string
+                             (if (string-match "/\\* *global *\\(.*?\\) *\\*/" btext) (match-string-no-properties 1 btext) "")
+                             " *, *" t))
+                      )))))
+
+    (use-package php-mode
       :ensure t
       :config
-      (add-hook 'js2-mode-hook #'js2-refactor-mode)
-      (js2r-add-keybindings-with-prefix "C-c C-m"))
+      (add-to-list 'auto-mode-alist '("\\.php[345]?\\'\\|\\.inc\\'" . php-mode)))
 
-    (js2-imenu-extras-mode)
-    (apply #'derived-mode-p '(org-mode web-mode))
+    (use-package json-mode
+      :ensure t
+      :config
+      (add-to-list 'auto-mode-alist '("\\.json\\'\\|\\.jshintrc\\'" . json-mode)))
 
-    (add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . js2-jsx-mode))
+    (use-package jasminejs-mode
+      :ensure t
+      :diminish jasminejs-mode
+      :config
+      (add-hook 'jasminejs-mode-hook (lambda () (jasminejs-add-snippets-to-yas-snippet-dirs))))
 
-    (add-hook 'js2-post-parse-callbacks
-              (lambda ()
-                (when (> (buffer-size) 0)
-                  (let ((btext (replace-regexp-in-string
-                                ": *true" " "
-                                (replace-regexp-in-string "[\n\t ]+" " " (buffer-substring-no-properties 1 (buffer-size)) t t))))
-                    (mapc (apply-partially 'add-to-list 'js2-additional-externs)
-                          (split-string
-                           (if (string-match "/\\* *global *\\(.*?\\) *\\*/" btext) (match-string-no-properties 1 btext) "")
-                           " *, *" t))
-                    )))))
+    (use-package js2-refactor
+      :ensure t
+      :diminish js2-refactor-mode)
 
-  (use-package php-mode
+    (add-to-list 'auto-mode-alist
+                 '("\\.p?html\\(\\.[a-z]\\{2\\}\\)?\\'" . html-mode)))
+
+  (defun load-web-mode ()
+    (defun my-web-mode-hook ()
+      "Hooks for Web mode."
+      (setq web-mode-markup-indent-offset 2)
+      (setq web-mode-css-indent-offset 2)
+      (setq web-mode-code-indent-offset 4)
+      (set-face-attribute 'web-mode-css-at-rule-face nil :foreground "Pink3")
+      (setq web-mode-enable-auto-pairing t)
+      (setq web-mode-enable-css-colorization t)
+      (setq web-mode-enable-current-element-highlight t)
+      (setq web-mode-enable-current-column-highlight t)
+      (setq web-mode-enable-auto-expanding t))
+
+    (use-package web-mode
+      :ensure t
+      :init
+      (setq web-mode-content-types-alist
+            '(("jsx" . "\\.js[x]?\\'")))
+      :config
+      (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . web-mode))
+      (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+      (add-hook 'web-mode-hook  'my-web-mode-hook))
+    )
+
+  (use-package emmet-mode
     :ensure t
     :config
-    (add-to-list 'auto-mode-alist '("\\.php[345]?\\'\\|\\.inc\\'" . php-mode)))
+    (defun emmet-hook()
+      (emmet-mode)
+      (local-set-key (kbd "M-TAB") 'emmet-expand-line))
+    ;; Auto-start on any markup modes
+    (add-hook 'sgml-mode-hook 'emmet-hook)
+    ;; enable Emmet's css abbreviation.
+    (add-hook 'css-mode-hook  'emmet-hook))
 
-  (use-package json-mode
+  (use-package nodejs-repl
     :ensure t
     :config
-    (add-to-list 'auto-mode-alist '("\\.json\\'\\|\\.jshintrc\\'" . json-mode)))
+    (defun my-jscallback ()
+      (local-set-key (kbd "C-c C-e") 'nodejs-repl-send-buffer))
 
-  (use-package jasminejs-mode
-    :ensure t
-    :diminish jasminejs-mode
-    :config
-    (add-hook 'jasminejs-mode-hook (lambda () (jasminejs-add-snippets-to-yas-snippet-dirs))))
+    (add-hook 'js-mode-hook 'my-jscallback))
 
-  (use-package js2-refactor
-    :ensure t
-    :diminish js2-refactor-mode)
+  ;; set web content type to jsx in js files, this will solve the indent problem I mentioned in my first post.
+  (setq web-mode-content-types-alist
+        '(("jsx" . ".*\\.js\\'"))
+        )
 
-  (add-to-list 'auto-mode-alist
-               '("\\.p?html\\(\\.[a-z]\\{2\\}\\)?\\'" . html-mode)))
-
-(defun load-web-mode ()
-  (defun my-web-mode-hook ()
-    "Hooks for Web mode."
-    (setq web-mode-markup-indent-offset 2)
-    (setq web-mode-css-indent-offset 2)
-    (setq web-mode-code-indent-offset 4)
-    (set-face-attribute 'web-mode-css-at-rule-face nil :foreground "Pink3")
-    (setq web-mode-enable-auto-pairing t)
-    (setq web-mode-enable-css-colorization t)
-    (setq web-mode-enable-current-element-highlight t)
-    (setq web-mode-enable-current-column-highlight t)
-    (setq web-mode-enable-auto-expanding t))
-
-  (use-package web-mode
-    :ensure t
-    :init
-    (setq web-mode-content-types-alist
-          '(("jsx" . "\\.js[x]?\\'")))
-    :config
-    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
-    (add-hook 'web-mode-hook  'my-web-mode-hook))
-  )
-
-(use-package emmet-mode
-  :ensure t
-  :config
-  (defun emmet-hook()
-    (emmet-mode)
-    (local-set-key (kbd "M-TAB") 'emmet-expand-line))
-  ;; Auto-start on any markup modes
-  (add-hook 'sgml-mode-hook 'emmet-hook)
-  ;; enable Emmet's css abbreviation.
-  (add-hook 'css-mode-hook  'emmet-hook))
-
-(use-package nodejs-repl
-  :ensure t
-  :config
-  (defun my-jscallback ()
-    (local-set-key (kbd "C-c C-e") 'nodejs-repl-send-buffer))
-
-  (add-hook 'js-mode-hook 'my-jscallback))
+  ;; for flycheck work in web-mode
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
 #+END_SRC
 
 ** Python
@@ -737,6 +745,12 @@ JavaScript, CSS, HTML ...
 
     (add-hook 'typescript-mode-hook #'setup-tide-mode)
     )
+#+END_SRC
+
+** Elm
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+  (use-package elm-mode
+    :ensure t)
 #+END_SRC
 
 ** Provide
