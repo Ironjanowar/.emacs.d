@@ -369,6 +369,14 @@ Just before saving, erase the whitespaces left at the end of lines.
 (add-hook 'before-save-hook 'whitespace-cleanup)
 #+END_SRC
 
+** Sudo edit
+Edit with root user, open a file and execute ~M-x sudo-edit~
+
+#+BEGIN_SRC elisp :tangle ./settings/editing-settings.el :mkdirp yes
+  (use-package sudo-edit
+    :ensure t)
+#+END_SRC
+
 ** Provide
 Provide *editing-settings.el*
 
