@@ -781,6 +781,8 @@ Make beautiful slides with ox-reveal
     :ensure t
     :config
     (setq org-reveal-root "file:///home/ironjanowar/reveal.js"))
+  (use-package htmlize
+    :ensure t)
 #+END_SRC
 
 ** Provide
