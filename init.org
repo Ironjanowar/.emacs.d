@@ -111,6 +111,7 @@ Cleaner interface, cleaner life.
 ** Theme
 
 /Moe/ does not rule anymore :/
+/gruvbox/ does not rule anymore :/
 
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
 
@@ -118,10 +119,13 @@ Cleaner interface, cleaner life.
   ;;   :ensure t
   ;;   :config (load-theme 'moe-dark t))
 
-  (use-package gruvbox-theme
-    :ensure t
-    :config (load-theme 'gruvbox-dark-hard t))
+  ;; (use-package gruvbox-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'gruvbox-dark-hard t))
 
+  (use-package rebecca-theme
+    :ensure t
+    :config (load-theme 'rebecca t))
 #+END_SRC
 
 ** Window movement
@@ -262,6 +266,21 @@ Turn icons into REAL icons
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
   (use-package emojify
     :ensure t)
+#+END_SRC
+** All the icons!
+Needed for NeoTree :D
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+  (use-package all-the-icons
+    :ensure t)
+#+END_SRC
+** NeoTree
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+  (use-package neotree
+    :ensure t
+    :config
+    (global-set-key "\M-n" 'neotree-toggle)
+    (setq neo-theme 'icons))
 #+END_SRC
 
 ** Provide
