@@ -13,4 +13,4 @@
 
 Show me!!
 
-[[.images/elixir_and_neotree.png]]
+[[./images/elixir_and_neotree.png]]
