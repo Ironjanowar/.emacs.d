@@ -128,6 +128,14 @@ Cleaner interface, cleaner life.
     :config (load-theme 'rebecca t))
 #+END_SRC
 
+** Powerline
+
+#+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
+  (use-package powerline
+    :ensure t
+    :config (powerline-default-theme))
+#+END_SRC
+
 ** Window movement
 
 I wanted a symbol in the left hand so I con move with *<symbol> +
