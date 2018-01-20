@@ -21,6 +21,8 @@
 (require 'magit-settings)
 
 (require 'clean-buffers)
+
+(require 'open-notes)
 #+END_SRC
 
 * Package Management
@@ -901,7 +903,9 @@ By: [[https://gist.github.com/prathik][@prathik]]
       ))
 
   (global-set-key
-   (kbd "C-c C-s")
+   (kbd "C-c C-n")
    'new-scratch-buffer-new-window
    )
+
+  (provide 'open-notes)
 #+END_SRC
