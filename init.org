@@ -874,3 +874,34 @@ Kill all buffers
 
 (provide 'clean-buffers)
 #+END_SRC
+
+* Open Notes
+Opens a buffer to take notes
+
+By: [[https://gist.github.com/prathik][@prathik]]
+
+#+BEGIN_SRC elisp :tangle ./plugins/open-notes.el :mkdirp yes
+  (defun new-scratch-buffer-new-window ()
+    "Create a new scratch buffer in a
+    new window. I generally take a lot of notes
+    in different topics. For each new topic hit
+    C-c C-s and start taking your notes.
+    Most of these notes don't need to be
+    saved but are used like quick post it
+    notes."
+    (interactive)
+    (let (($buf (generate-new-buffer "notes")))
+      (split-window-right)
+      (other-window 1)
+      (balance-windows)
+      (switch-to-buffer $buf)
+      (org-mode)
+      (insert "# Notes\n\n")
+      $buf
+      ))
+
+  (global-set-key
+   (kbd "C-c C-s")
+   'new-scratch-buffer-new-window
+   )
+#+END_SRC

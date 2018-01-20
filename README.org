@@ -7,4 +7,10 @@
 - Open *~/.emacs.d/init.org*
 - Use the command: ~C-c C-v t~ (or ~M-x org-babel-tangle RET~)
 - Restart Emacs and wait until it installs everything
+- OPTIONAL: ~M-x all-the-icons-install-fonts RET~ if you want to use ~NeoTree~
 - DONE!
+
+
+Show me!!
+
+[[./images/elixir_and_neotree.png]]
