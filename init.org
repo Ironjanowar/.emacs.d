@@ -25,6 +25,8 @@
 (require 'mix-format)
 
 (require 'open-notes)
+
+(require 'restclient-settings)
 #+END_SRC
 
 * Package Management
@@ -1064,7 +1066,7 @@ Providing *magit-settings.el*
 
 Kill all buffers
 
-#+BEGIN_SRC elisp :tangle ./plugins/clean-buffers.el :mkdirp yes
+#+BEGIN_SRC elisp :tangle ./plugins/clean-buffers.el :mkdirp yesn
 (defun kill-buffers()
   (let (buffer buffers)
     (setq buffers (buffer-list))
@@ -1080,6 +1082,15 @@ Kill all buffers
 (global-set-key (kbd "C-x C-k") 'clean-buffers)
 
 (provide 'clean-buffers)
+#+END_SRC
+
+* Rest Client
+
+#+BEGIN_SRC elisp :tangle ./plugins/restclient-settings.el :mkdirp yes
+  (use-package restclient
+    :ensure t)
+
+  (provide 'restclient-settings)
 #+END_SRC
 
 * Open Notes
