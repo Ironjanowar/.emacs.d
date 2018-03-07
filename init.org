@@ -27,6 +27,8 @@
 (require 'open-notes)
 
 (require 'restclient-settings)
+
+(require 'dockerfile-settings)
 #+END_SRC
 
 * Package Management
@@ -745,6 +747,9 @@ JavaScript, CSS, HTML ...
   (add-hook 'elixir-mode-hook
             (lambda () (add-hook 'before-save-hook 'mix-format-before-save)))
 
+  ;; yasnippets
+  (use-package elixir-yasnippets
+    :ensure t)
 #+END_SRC
 
 *** Mix Format
@@ -1098,6 +1103,14 @@ Kill all buffers
     :ensure t)
 
   (provide 'restclient-settings)
+#+END_SRC
+
+* Dockerfiles
+#+BEGIN_SRC elisp :tangle ./plugins/dockerfile-settings.el :mkdirp yes
+  (use-package dockerfile-mode
+    :ensure t)
+
+  (provide 'dockerfile-settings)
 #+END_SRC
 
 * Open Notes
