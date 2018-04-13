@@ -269,11 +269,26 @@ Start Emacs maximized
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
 
-** Inhib startup buffer
+** Pretty dashboard
 
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
-;; Remove initial buffer
-(setq inhibit-startup-screen t)
+  ;; Remove initial buffer
+  (setq inhibit-startup-screen t)
+
+  (use-package projectile
+    :ensure t)
+
+  (use-package page-break-lines
+    :ensure t)
+
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook)
+    (setq dashboard-startup-banner nil)
+    (setq dashboard-items '((recents  . 5)
+                            (projects . 5)
+                            (agenda . 5))))
 #+END_SRC
 
 ** Emojify
