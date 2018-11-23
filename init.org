@@ -29,6 +29,8 @@
 (require 'restclient-settings)
 
 (require 'dockerfile-settings)
+
+(require 'org-wiki-install)
 #+END_SRC
 
 * Package Management
@@ -1161,4 +1163,27 @@ By: [[https://gist.github.com/prathik][@prathik]]
    )
 
   (provide 'open-notes)
+#+END_SRC
+
+* Org Wiki
+Awesome desktop wiki by [[https://github.com/caiorss/org-wiki][@caiorss]]
+
+#+BEGIN_SRC elisp :tangle ./plugins/org-wiki-install.el :mkdirp yes
+  (add-to-list 'load-path "~/.emacs.d/plugins/org-wiki/")
+
+  (defun install-org-wiki()
+    (shell-command "cd ~/.emacs.d && ./install-org-wiki.sh"))
+
+  (defun prompt-installation()
+    (interactive)
+    (if (yes-or-no-p "install-org-wiki.sh will be executed, do you agree? ")
+        (install-org-wiki) nil))
+
+  (if (file-exists-p "~/.emacs.d/plugins/org-wiki/org-wiki.el")
+      nil
+    (prompt-installation))
+
+  (require 'org-wiki)
+
+  (provide 'org-wiki-install)
 #+END_SRC
