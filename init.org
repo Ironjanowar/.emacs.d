@@ -1050,14 +1050,27 @@ Make beautiful slides with ox-reveal
 
 ** Settings
 #+BEGIN_SRC elisp :tangle ./settings/reveal-settings.el :mkdirp yes
-  ;; (use-package org
-  ;;   :ensure t)
-  ;; (use-package ox-reveal
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq org-reveal-root "file:///home/ironjanowar/reveal.js"))
-  ;; (use-package htmlize
-  ;;   :ensure t)
+  (use-package org
+    :ensure t)
+
+  (defun install-ox-reveal()
+    (shell-command "cd ~/.emacs.d && ./install-ox-reveal.sh")
+    (require 'ox-reveal)
+    (setq org-reveal-root "file:///home/ironjanowar/reveal.js"))
+
+  (defun prompt-ox-reveal-installation()
+    (interactive)
+    (if (yes-or-no-p "install-ox-reveal.sh will be executed, do you agree? ")
+        (install-ox-reveal) nil))
+
+  (add-to-list 'load-path "~/.emacs.d/plugins/org-reveal/")
+
+  (if (file-exists-p "~/.emacs.d/plugins/org-reveal/ox-reveal.el")
+      nil
+    (prompt-ox-reveal-installation))
+
+  (use-package htmlize
+    :ensure t)
 #+END_SRC
 
 ** Provide
@@ -1184,6 +1197,9 @@ Awesome desktop wiki by [[https://github.com/caiorss/org-wiki][@caiorss]]
     (prompt-installation))
 
   (require 'org-wiki)
+
+  (setq org-wiki-location '"~/org/wiki/")
+  (global-set-key (kbd "C-c w") 'org-wiki-index)
 
   (provide 'org-wiki-install)
 #+END_SRC
