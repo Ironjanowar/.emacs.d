@@ -1109,6 +1109,8 @@ Magit is a lovely mode for git.
   ;; Git Flow
   (use-package magit-gitflow
     :ensure t
+    :init
+    (setq magit-gitflow-popup-key ".")
     :config
     (add-hook 'magit-mode-hook 'turn-on-magit-gitflow))
 #+END_SRC
