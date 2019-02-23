@@ -1174,6 +1174,7 @@ By: [[https://gist.github.com/prathik][@prathik]]
       (switch-to-buffer $buf)
       (org-mode)
       (insert "# Notes\n\n")
+      (set-input-method 'spanish-postfix)
       $buf
       ))
 
