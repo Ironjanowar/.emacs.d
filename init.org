@@ -138,12 +138,15 @@ Cleaner interface, cleaner life.
     :config (load-theme 'rebecca t))
 #+END_SRC
 
-** Powerline
+** Doom modeline
+A fancy and fast mode-line which was from DOOM Emacs, but it's more
+powerful and much faster. [[https://github.com/seagle0128/doom-modeline][Source]]
 
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
-  (use-package powerline
+  (use-package doom-modeline
     :ensure t
-    :config (powerline-default-theme))
+    :hook (after-init . doom-modeline-mode)
+    :config (setq doom-modeline-height 15))
 #+END_SRC
 
 ** Window movement
