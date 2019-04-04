@@ -146,7 +146,7 @@ powerful and much faster. [[https://github.com/seagle0128/doom-modeline][Source]
   (use-package doom-modeline
     :ensure t
     :hook (after-init . doom-modeline-mode)
-    :config (setq doom-modeline-height 15))
+    :config (setq doom-modeline-height 10))
 #+END_SRC
 
 ** Window movement
@@ -157,10 +157,10 @@ I wanted a symbol in the left hand so I con move with *<symbol> +
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
 
 (use-package windmove
-  :bind (("C-. <up>" . windmove-up)
-         ("C-. <left>" . windmove-left)
-         ("C-. <right>" . windmove-right)
-         ("C-. <down>" . windmove-down))
+  :bind (("C-. C-c" . windmove-up)
+         ("C-. C-h" . windmove-left)
+         ("C-. C-n" . windmove-right)
+         ("C-. C-t" . windmove-down))
   )
 #+END_SRC
 
