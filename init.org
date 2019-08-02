@@ -457,6 +457,22 @@ Provide *editing-settings.el*
 :tangle:   ~/.emacs.d/settings/programming-settings.el
 :END:
 
+** Latex
+Auctex
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+  (use-package tex-mode
+    :ensure auctex)
+#+END_SRC
+
+** Markdown
+Markdown mode
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+  (use-package markdown-mode
+    :ensure t)
+#+END_SRC
+
 ** Yasnippets
 
 Completion for all languages
