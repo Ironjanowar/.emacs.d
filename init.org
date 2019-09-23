@@ -457,6 +457,30 @@ Provide *editing-settings.el*
 :tangle:   ~/.emacs.d/settings/programming-settings.el
 :END:
 
+** LSP
+[[https://github.com/emacs-lsp/lsp-mode#installation][Language Server Protocol]] mode
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+  (use-package lsp-mode
+    :hook (XXX-mode . lsp)
+    :commands lsp)
+
+  ;; optionally
+  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package company-lsp :commands company-lsp)
+  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+#+END_SRC
+
+** Rust
+Rust mode
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
+  (use-package rust-mode
+    :ensure t
+    :config (add-hook 'rust-mode-hook #'lsp))
+#+END_SRC
+
 ** Latex
 Auctex
 
@@ -556,62 +580,76 @@ Concrete language settings
 JavaScript, CSS, HTML ...
 
 #+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
-;; php mode
-(use-package php-mode
-  :ensure t
-  :config
-  (add-to-list 'auto-mode-alist '("\\.php[345]?\\'\\|\\.inc\\'" . php-mode)))
+  ;; php mode
+  (use-package php-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.php[345]?\\'\\|\\.inc\\'" . php-mode)))
 
-;; json mode
-(use-package json-mode
-  :ensure t
-  :config
-  (add-to-list 'auto-mode-alist '("\\.json\\'\\|\\.jshintrc\\'" . json-mode)))
+  ;; json mode
+  (use-package json-mode
+    :ensure t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.json\\'\\|\\.jshintrc\\'" . json-mode)
+    (setq js-indent-level 2)))
 
-;; Web mode
-(use-package web-mode
-  :ensure t
+  ;; Web mode
+  (use-package web-mode
+    :ensure t
 
-  :init
-  (defun my-web-mode-hook ()
-    "Hooks for Web mode."
-    (setq web-mode-markup-indent-offset 2)
-    (setq web-mode-css-indent-offset 2)
-    (setq web-mode-code-indent-offset 4)
-    (setq web-mode-enable-auto-pairing t)
-    (setq web-mode-enable-css-colorization t)
-    (setq web-mode-enable-current-element-highlight t)
-    (setq web-mode-enable-current-column-highlight t)
-    (setq web-mode-enable-auto-expanding t))
+    :init
+    (defun my-web-mode-hook ()
+      "Hooks for Web mode."
+      (setq web-mode-markup-indent-offset 2)
+      (setq web-mode-css-indent-offset 2)
+      (setq web-mode-code-indent-offset 2)
+      (setq web-mode-enable-auto-pairing t)
+      (setq web-mode-enable-css-colorization t)
+      (setq web-mode-enable-current-element-highlight t)
+      (setq web-mode-enable-current-column-highlight t)
+      (setq web-mode-enable-auto-expanding t))
 
-  :config
-  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
-  (add-hook 'web-mode-hook 'my-web-mode-hook)
-  )
+    :config
+    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+    (add-hook 'web-mode-hook 'my-web-mode-hook)
+    )
 
-;; Emmet mode
-(use-package emmet-mode
-  :ensure t
-  :config
-  (add-hook 'web-mode-hook 'emmet-mode))
+  ;; Emmet mode
+  (use-package emmet-mode
+    :ensure t
+    :config
+    (add-hook 'web-mode-hook 'emmet-mode))
 
-;; Node repl
-(use-package nodejs-repl
-  :ensure t
-  :config
-  (defun my-jscallback ()
-    (local-set-key (kbd "C-c C-e") 'nodejs-repl-send-buffer))
+  ;; Node repl
+  (use-package nodejs-repl
+    :ensure t
+    :config
+    (defun my-jscallback ()
+      (local-set-key (kbd "C-c C-e") 'nodejs-repl-send-buffer))
 
-  (add-hook 'js-mode-hook 'my-jscallback))
+    (add-hook 'js-mode-hook 'my-jscallback))
+#+END_SRC
+
+
+** Node
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+  (use-package tide
+    :ensure t
+    :after (typescript-mode company flycheck)
+    :hook ((typescript-mode . tide-setup)
+           (typescript-mode . tide-hl-identifier-mode)
+           (before-save . tide-format-before-save))
+    :config (setq tide-format-options '(:indentSize 2)))
 #+END_SRC
 
 ** JavaScript
@@ -652,9 +690,9 @@ JavaScript, CSS, HTML ...
     (use-package js2-mode
       :ensure t
       :init
-      (setq js-indent-level 4)
-      (setq js2-indent-level 4)
-      (setq-default js2-basic-offset 4)
+      (setq js-indent-level 2)
+      (setq js2-indent-level 2)
+      (setq-default js2-basic-offset 2)
       (setq ac-js2-evaluate-calls t)
       (setq js2-highlight-level 3)
       :config
@@ -711,7 +749,7 @@ JavaScript, CSS, HTML ...
       "Hooks for Web mode."
       (setq web-mode-markup-indent-offset 2)
       (setq web-mode-css-indent-offset 2)
-      (setq web-mode-code-indent-offset 4)
+      (setq web-mode-code-indent-offset 2)
       (set-face-attribute 'web-mode-css-at-rule-face nil :foreground "Pink3")
       (setq web-mode-enable-auto-pairing t)
       (setq web-mode-enable-css-colorization t)
