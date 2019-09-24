@@ -639,7 +639,6 @@ JavaScript, CSS, HTML ...
     (add-hook 'js-mode-hook 'my-jscallback))
 #+END_SRC
 
-
 ** Node
 
 #+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
@@ -650,6 +649,13 @@ JavaScript, CSS, HTML ...
            (typescript-mode . tide-hl-identifier-mode)
            (before-save . tide-format-before-save))
     :config (setq tide-format-options '(:indentSize 2)))
+#+END_SRC
+
+** Terraform
+
+#+BEGIN_SRC elisp :tangle ./settings/programming-language-settings.el :mkdirp yes
+  (use-package terraform-mode
+    :ensure t)
 #+END_SRC
 
 ** JavaScript
