@@ -121,7 +121,9 @@ Cleaner interface, cleaner life.
 ** Theme
 
 /Moe/ does not rule anymore :/
+
 /gruvbox/ does not rule anymore :/
+
 /rebecca/ does not rule anymore :/
 
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
