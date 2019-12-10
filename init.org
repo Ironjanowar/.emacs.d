@@ -122,6 +122,7 @@ Cleaner interface, cleaner life.
 
 /Moe/ does not rule anymore :/
 /gruvbox/ does not rule anymore :/
+/rebecca/ does not rule anymore :/
 
 #+BEGIN_SRC elisp :tangle ./settings/interface-settings.el :mkdirp yes
 
@@ -133,9 +134,13 @@ Cleaner interface, cleaner life.
   ;;   :ensure t
   ;;   :config (load-theme 'gruvbox-dark-hard t))
 
-  (use-package rebecca-theme
+  ;; (use-package rebecca-theme
+  ;;   :ensure t
+  ;;   :config (load-theme 'rebecca t))
+
+  (use-package kaolin-themes
     :ensure t
-    :config (load-theme 'rebecca t))
+    :config (load-theme 'kaolin-galaxy t))
 #+END_SRC
 
 ** Doom modeline
