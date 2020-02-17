@@ -28,6 +28,8 @@
 
 (require 'restclient-settings)
 
+(require 'verb-settings)
+
 (require 'dockerfile-settings)
 
 (require 'org-wiki-install)
@@ -561,10 +563,19 @@ Well...
 A lot of well...
 
 #+BEGIN_SRC elisp :tangle ./settings/programming-settings.el :mkdirp yes
-;; Flycheck
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
+  ;; Flycheck
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode)
+    :config
+    (add-to-list 'display-buffer-alist
+                 `(,(rx bos "*Flycheck errors*" eos)
+                   (display-buffer-reuse-window
+                    display-buffer-in-side-window)
+                   (side            . bottom)
+                   (reusable-frames . visible)
+                   (window-height   . 0.33)))
+    )
 #+END_SRC
 
 ** Provide
@@ -1258,6 +1269,17 @@ Kill all buffers
     :ensure t)
 
   (provide 'restclient-settings)
+#+END_SRC
+
+* Verb http
+
+#+BEGIN_SRC elisp :tangle ./plugins/verb-settings.el :mkdirp yes
+  (use-package verb
+    :ensure t
+    :after org
+    :config (define-key org-mode-map (kbd "C-c C-r") verb-mode-prefix-map))
+
+  (provide 'verb-settings)
 #+END_SRC
 
 * Dockerfiles
