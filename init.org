@@ -33,6 +33,8 @@
 (require 'dockerfile-settings)
 
 (require 'org-wiki-install)
+
+(require 'ag-install)
 #+END_SRC
 
 * Package Management
@@ -1348,4 +1350,29 @@ Awesome desktop wiki by [[https://github.com/caiorss/org-wiki][@caiorss]]
   (global-set-key (kbd "C-c w") 'org-wiki-index)
 
   (provide 'org-wiki-install)
+#+END_SRC
+
+* ag (grep alternative)
+
+#+BEGIN_SRC elisp :tangle ./plugins/ag-install.el :mkdirp yes
+  (add-to-list 'load-path "~/.emacs.d/plugins/")
+
+  (defun install-ag()
+    (let ((user-home (string-trim (shell-command-to-string "echo $HOME/.emacs.d")))
+          (default-directory "/sudo::"))
+      (shell-command (format "cd %s && ./install-ag.sh" user-home))))
+
+  (defun prompt-installation()
+    (interactive)
+    (if (yes-or-no-p "install-ag.sh will be executed, do you agree? ")
+        (install-ag) nil))
+
+  (if (file-exists-p "~/.emacs.d/plugins/ag-installed")
+      nil
+    (prompt-installation))
+
+  (use-package ag
+    :ensure t)
+
+  (provide 'ag-install)
 #+END_SRC
