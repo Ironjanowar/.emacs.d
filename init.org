@@ -35,6 +35,8 @@
 (require 'org-wiki-install)
 
 (require 'ag-install)
+
+(require 'kubel-install)
 #+END_SRC
 
 * Package Management
@@ -1375,4 +1377,14 @@ Awesome desktop wiki by [[https://github.com/caiorss/org-wiki][@caiorss]]
     :ensure t)
 
   (provide 'ag-install)
+#+END_SRC
+
+* Kubel
+Kubernetes integration in Emacs, check it [[https://github.com/abrochard/kubel][here]]
+
+#+BEGIN_SRC elisp :tangle ./plugins/kubel-install.el :mkdirp yes
+  (use-package kubel
+    :ensure t)
+
+  (provide 'kubel-install)
 #+END_SRC
