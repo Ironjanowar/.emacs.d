@@ -106,6 +106,12 @@ Config for macOS
 
 #+BEGIN_SRC elisp :tangle ./settings/os-x.el :mkdirp yes
   ;; macOS config
+  (add-to-list 'package-archives 'exec-path-from-shell)
+  (when (memq window-system '(mac ns))
+    (setenv "SHELL" "/bin/zsh")
+    (exec-path-from-shell-initialize)
+    (exec-path-from-shell-copy-envs
+     '("PATH")))
 
   (setq mac-command-key-is-meta t)
   (setq mac-command-modifier 'meta)
