@@ -1382,7 +1382,7 @@ Awesome desktop wiki by [[https://github.com/caiorss/org-wiki][@caiorss]]
   (provide 'org-wiki-install)
 #+END_SRC
 
-* ag (grep alternative)
+* ag and rg(grep alternative)
 
 #+BEGIN_SRC elisp :tangle ./plugins/ag-install.el :mkdirp yes
   (add-to-list 'load-path "~/.emacs.d/plugins/")
@@ -1403,6 +1403,11 @@ Awesome desktop wiki by [[https://github.com/caiorss/org-wiki][@caiorss]]
 
   (use-package ag
     :ensure t)
+
+  ;; Ripgrep (ag alternative)
+  (use-package helm-rg
+    :ensure t
+    :config (global-set-key (kbd "C-c C-s") 'helm-rg))
 
   (provide 'ag-install)
 #+END_SRC
