@@ -39,6 +39,8 @@
 (require 'kubel-install)
 
 ;; (require 'os-x)
+
+(require 'terminal-integration)
 #+END_SRC
 
 * Package Management
@@ -1420,4 +1422,21 @@ Kubernetes integration in Emacs, check it [[https://github.com/abrochard/kubel][
     :ensure t)
 
   (provide 'kubel-install)
+#+END_SRC
+
+* Terminal
+
+#+BEGIN_SRC elisp :tangle ./plugins/terminal-integration.el :mkdirp yes
+  (defun launch-terminal-in-file-path ()
+    (interactive)
+    (start-process
+     "terminal"
+     "terminal"
+     "open"
+     "-a"
+     "Therm" (file-name-directory buffer-file-name)))
+
+  (global-set-key (kbd "C-c C-t") 'launch-terminal-in-file-path)
+
+  (provide 'terminal-integration)
 #+END_SRC
